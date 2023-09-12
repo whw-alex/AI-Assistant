@@ -5,6 +5,7 @@ import os
 
 sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(__file__)+"\LeNet_PyTorch_initial")
+sys.path.append(os.path.dirname(__file__)+"/LeNet_PyTorch_initial")
 
 from LeNet_PyTorch_initial.inference import *
 
