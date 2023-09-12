@@ -72,7 +72,7 @@ def add_file(history, file):
 def bot(history):
     global messages
     collected_response = ''
-
+    print('history:', history)
     if(history[-1][1] == None):
         # 需要调用语言模型的情况
         response_generator = chat(messages)
