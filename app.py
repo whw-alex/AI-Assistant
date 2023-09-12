@@ -25,7 +25,7 @@ def add_text(history, text):
     elif '/image' in text:      # 图片生成
         results = image_generate(text[7:])
         messages = messages + [{"role": "user", "content": text}]
-        history = history + [(text, results)]
+        history = history + [(text, (results,))]
     else:
         messages = messages + [{"role": "user", "content": text}]
         history = history + [(text, None)]
@@ -61,7 +61,7 @@ def bot(history):
         messages += [{"role": "assistant", "content": collected_response}]
     else:
         # 不需要调用语言模型，history和messages都已经更新完毕的情况
-        return history
+        yield history
     
     # TODO：response的格式处理？
     print(f'messages: {messages}')
