@@ -40,7 +40,10 @@ def add_file(history, file):
         results = image_classification(file.name)
         messages = messages + [{"role": "user", "content": f"Please classify {file.name}"}]
         messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
-        history = history + [((file.name,), f"Classification result:{results}")]
+        history = history + [((file.name,), f"Classification result: {results}")]
+        print('history:', history)
+    else:
+        history = history + [((file.name,), None)]
     # TODO: 是否更新 messages？
     return history
 
@@ -48,7 +51,7 @@ def add_file(history, file):
 def bot(history):
     global messages
     collected_response = ''
-
+    print('history:', history)
     if(history[-1][1] == None):
         # 需要调用语言模型的情况
         response_generator = chat(messages)
