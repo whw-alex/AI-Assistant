@@ -1,11 +1,25 @@
 import requests
+import os
+import openai
 
-def audio2text(file):
+
+# TODO： 更换api_key
+openai.api_key = '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'
+openai.api_base = "http://166.111.80.169:8080/v1"
+
+def audio2text(filename):
     """
     TODO
     """
-    pass
+    file=open(filename,'rb')
+    result=openai.Audio.transcribe(model="whisper-1",file=file)
+    text=''
+    segments=result['segments']
+    for seg in segments:
+        text+=seg['text']
+        text+=' '
+    return text
 
 
 if __name__ == "__main__":
-    audio2text('sun-wukong.wav')
+    audio2text('./sun-wukong.wav')
