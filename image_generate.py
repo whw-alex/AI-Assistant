@@ -1,8 +1,7 @@
 import os
 import openai
 
-# TODO： 更换api_key
-openai.api_key = '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'
+openai.api_key = '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'
 openai.api_base = "http://166.111.80.169:8080/v1"
 
 def image_generate(content: str):
