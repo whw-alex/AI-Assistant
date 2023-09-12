@@ -25,6 +25,7 @@ def add_text(history, text):
     elif '/image' in text:      # 图片生成
         results = image_generate(text[7:])
         messages = messages + [{"role": "user", "content": text}]
+        messages = messages + [{"role": "assistant", "content": results}]
         history = history + [(text, (results,))]
     else:
         messages = messages + [{"role": "user", "content": text}]
@@ -38,7 +39,7 @@ def add_file(history, file):
     if 'png' == file.name[-3:]:    # 图片分类
         results = image_classification(file.name)
         messages = messages + [{"role": "user", "content": f"Please classify {file.name}"}]
-        messages = messages + [{"role": "user", "content": f"Classification result:{results}"}]
+        messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
         history = history + [((file.name,), f"Classification result:{results}")]
     # TODO: 是否更新 messages？
     return history
