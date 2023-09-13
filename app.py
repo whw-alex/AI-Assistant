@@ -30,6 +30,7 @@ def getHashKey(text):
 
 def add_text(history, text):
     global messages
+    global history_dict
     global sound_pieces
     if '/search' in text:
         history_dict[getHashKey(text)]=['search',None]
@@ -42,9 +43,9 @@ def add_text(history, text):
         messages = messages + [{"role": "user", "content": f"Please summarize: \n\n{processed_results}"}]
         history = history + [(text, None)]
     elif '/image' in text:      # 图片生成
-        results = image_generate(text[7:])
-        history_dict[getHashKey(text)]=['image',results]
+        history_dict[getHashKey(text)]=['image',None]
         messages = messages + [{"role": "user", "content": text}]
+        print('add_text:',text)
         history = history + [(text, None)]
     elif '/audio' in text:
         sound_pieces+=1
@@ -78,6 +79,7 @@ def add_file(history, file):
 
 def bot(history):
     global messages
+    global history_dict
     collected_response = ''
     print('history:', history)
     if(history[-1][1] == None):
@@ -100,10 +102,13 @@ def bot(history):
             messages = messages + [{"role": "assistant", "content": collected_response}]
             text2audio(collected_response,label[1])
             history[-1][1]=(sound_path+label[1],)
+            yield history
         elif label[0] == 'image':
-            results=label[1]
+            text=history[-1][0]
+            results = image_generate(text[7:])   
             messages = messages + [{"role": "assistant", "content": results}]
             history[-1][1]=(results,)
+            yield history
             
     else:
         # 不需要调用语言模型，history和messages都已经更新完毕的情况
