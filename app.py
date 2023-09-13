@@ -145,6 +145,7 @@ def bot(history):
             text2audio(collected_response,label[1])
             history[-1][1]=(sound_path+label[1],)
             yield history
+            
         elif label[0] == 'image':
             text=history[-1][0]
             results = image_generate(text[7:])   
