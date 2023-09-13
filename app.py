@@ -47,14 +47,14 @@ def add_text(history, text):
         history_dict[getHashKey(text)] = ['fetch', None]
 
     elif '/image' in text:      # 图片生成
-        results = image_generate(text[7:])
         messages = messages + [{"role": "user", "content": text}]
-        history = history + [(text, results)]
-        history_dict[getHashKey(text)] = ['image', results]
+        history = history + [(text, None)]
+        history_dict[getHashKey(text)] = ['image', None]
 
     elif '/file' in text:
         prompt = generate_question(current_file_text, text[6:])
         messages = messages + [{"role": "user", "content": prompt}]
+        print('add_text:',text)
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['file', None]
 
@@ -108,9 +108,7 @@ def bot(history):
     global history_dict
     collected_response = ''
     print('bot his: ',history)
-    print('history:', history)
     if(history[-1][1] == None):
-        messages += [{"role": "assistant", "content": collected_response}]
         label=history_dict[getHashKey(history[-1][0])] #从用户的text获取hash值作为key
         if label[0] == 'chat' or label[0] == 'fetch' or label[0] == 'search':
             response_generator = chat(messages)
