@@ -47,7 +47,6 @@ def add_text(history, text):
         history_dict[getHashKey(text)] = ['fetch', None]
 
     elif '/image' in text:      # 图片生成
-<<<<<<< HEAD
         results = image_generate(text[7:])
         messages = messages + [{"role": "user", "content": text}]
         history = history + [(text, results)]
@@ -56,11 +55,6 @@ def add_text(history, text):
     elif '/file' in text:
         prompt = generate_question(current_file_text, text[6:])
         messages = messages + [{"role": "user", "content": prompt}]
-=======
-        history_dict[getHashKey(text)]=['image',None]
-        messages = messages + [{"role": "user", "content": text}]
-        print('add_text:',text)
->>>>>>> 386272bfd948d5d200ff5292ea18e13ad8ee6e43
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['file', None]
 
@@ -147,11 +141,8 @@ def bot(history):
             messages = messages + [{"role": "assistant", "content": collected_response}]
             text2audio(collected_response,label[1])
             history[-1][1]=(sound_path+label[1],)
-<<<<<<< HEAD
-
-=======
             yield history
->>>>>>> 386272bfd948d5d200ff5292ea18e13ad8ee6e43
+            
         elif label[0] == 'image':
             text=history[-1][0]
             results = image_generate(text[7:])   
