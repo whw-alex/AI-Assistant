@@ -7,6 +7,8 @@ from fetch import fetch
 from image_generate import image_generate
 from pdf import generate_summary, generate_question, generate_text
 from mnist import image_classification
+from stt import audio2text
+from tts import text2audio
 
 # Chatbot demo with multimodal input (text, markdown, LaTeX, code blocks, image, audio, & video). Plus shows support for streaming text.
 
@@ -14,9 +16,14 @@ messages = []
 current_file_text = None
 isTxt = False
 
+sound_pieces=0
+sound_path='./sounds/'
+
 def add_text(history, text):
     global messages
     global isTxt
+    global sound_pieces
+    
     if '/search' in text:
         results = search(text[8:])
         messages = messages + [{"role": "user", "content": f"Please answer {text[8:]} based on the search result: \n\n{results}"}]
@@ -37,6 +44,21 @@ def add_text(history, text):
         messages = messages + [{"role": "user", "content": prompt}]
         history = history + [(text, None)]
         isTxt = True
+        messages = messages + [{"role": "assistant", "content": results}]
+        history = history + [(text, (results,))]
+    elif '/audio' in text:
+        messages = messages + [{"role": "user", "content": text[7:]}]
+        response_generator = chat(messages)
+        collected_response=''
+        for response in response_generator:
+            collected_response += response
+        messages = messages + [{"role": "assistant", "content": collected_response}]
+        sound_pieces+=1
+        filename=str(sound_pieces)+'.wav'
+        
+        text2audio(collected_response,filename)
+        history = history + [(text, (sound_path+filename,))]
+        print('ok')
     else:
         messages = messages + [{"role": "user", "content": text}]
         history = history + [(text, None)]
@@ -52,7 +74,7 @@ def add_file(history, file):
     if 'png' == file.name[-3:]:    # 图片分类
         results = image_classification(file.name)
         messages = messages + [{"role": "user", "content": f"Please classify {file.name}"}]
-        messages = messages + [{"role": "user", "content": f"Classification result:{results}"}]
+        messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
         history = history + [((file.name,), f"Classification result:{results}")]
         isTxt = False
 
@@ -62,6 +84,11 @@ def add_file(history, file):
         messages = messages + [{"role": "user", "content": prompt}]
         history = history + [((file.name,), None)]
         isTxt = True
+    elif '.wav' == file.name[-4:]:
+        text= audio2text(file.name)
+        messages = messages + [{"role": "user", "content": f"Please transcribe {file.name}"}]
+        messages = messages + [{"role": "assistant", "content": text}]
+        history = history + [((file.name,), text)]
     # TODO: 是否更新 messages？
     return history
 
@@ -70,6 +97,7 @@ def bot(history):
     global messages
     collected_response = ''
     print('bot his: ',history)
+    print('history:', history)
     if(history[-1][1] == None):
         # 需要调用语言模型的情况
         if isTxt:
