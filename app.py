@@ -25,7 +25,7 @@ history_dict={}
 def getHashKey(text):
     ##把文本输入进来，得到文本的特征key，用此key映射到此文本的消息类型以及其他的附加消息
     if(type(text)==tuple):
-        str_text='('+text[0]+','+text[1]+')'
+        str_text='('+text[0]+',)'
     else: 
         str_text=text
     hash = hashlib.sha256()
@@ -101,7 +101,9 @@ def add_file(history, file):
         text= audio2text(file.name)
         messages = messages + [{"role": "user", "content": f"Please transcribe {file.name}"}]
         messages = messages + [{"role": "assistant", "content": text}]
+        print(messages)
         history = history + [((file.name,), text)]
+        print(history)
         history_dict[getHashKey((file.name,))] = ['wav', None]
         
     # TODO: 是否更新 messages？
@@ -153,10 +155,12 @@ def bot(history):
             history[-1][1]=(results,)
             yield history
         else:
-            return history
+    
+            yield history
     else:
         # 不需要调用语言模型，history和messages都已经更新完毕的情况
-        return history
+        print('successfully in else')
+        yield history
     
     # TODO：response的格式处理？
     print(f'messages: {messages}')
