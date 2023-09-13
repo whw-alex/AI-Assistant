@@ -88,11 +88,9 @@ def add_file(history, file):
     global isTxt
     print('add_file his:',history)
     if 'png' == file.name[-3:]:    # 图片分类
-        results = image_classification(file.name)
         messages = messages + [{"role": "user", "content": f"Please classify {file.name}"}]
-        messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
-        history = history + [((file.name,), f"Classification result:{results}")]
-        history_dict[getHashKey((file.name,))] = ['png', None]
+        history = history + [((file.name,), None)]
+        history_dict[getHashKey((file.name,))] = ['png', file.name]
         
 
     elif 'txt' == file.name[-3:]:
@@ -103,13 +101,9 @@ def add_file(history, file):
         history_dict[getHashKey((file.name,))] = ['txt', None]
 
     elif '.wav' == file.name[-4:]:
-        text= audio2text(file.name)
         messages = messages + [{"role": "user", "content": f"Please transcribe {file.name}"}]
-        messages = messages + [{"role": "assistant", "content": text}]
-        print(messages)
-        history = history + [((file.name,), text)]
-        print(history)
-        history_dict[getHashKey((file.name,))] = ['wav', None]
+        history = history + [((file.name,), None)]
+        history_dict[getHashKey((file.name,))] = ['wav',file.name]
         
     # TODO: 是否更新 messages？
     return history
@@ -122,6 +116,7 @@ def bot(history):
     print('bot his: ',history)
     if(history[-1][1] == None):
         label=history_dict[getHashKey(history[-1][0])] #从用户的text获取hash值作为key
+        
         if label[0] == 'chat' or label[0] == 'fetch' or label[0] == 'search':
             response_generator = chat(messages)
             history[-1][1] = ''
@@ -163,13 +158,23 @@ def bot(history):
         elif label[0] == 'function':
             response = function_calling(messages)
             history[-1][1] = response
-
+            
+        elif label[0] == 'wav':
+            text= audio2text(label[1])
+            messages = messages + [{"role": "assistant", "content": text}]
+            history[-1][1]=text
+            yield history
+            
+        elif label[0] == 'png':
+            results=image_classification(label[1])
+            messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
+            history[-1][1]=f"Classification result:{results}"
+            yield history
+            
         else:
-    
             yield history
     else:
         # 不需要调用语言模型，history和messages都已经更新完毕的情况
-        print('successfully in else')
         yield history
     
     # TODO：response的格式处理？
