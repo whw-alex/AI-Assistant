@@ -75,6 +75,7 @@ def add_text(history, text):
         messages = messages + [{"role": "user", "content": text[10:]}]
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['function', None]
+
     else:
         messages = messages + [{"role": "user", "content": text}]
         history = history + [(text, None)]
@@ -158,6 +159,7 @@ def bot(history):
         elif label[0] == 'function':
             response = function_calling(messages)
             history[-1][1] = response
+            yield history
             
         elif label[0] == 'wav':
             text= audio2text(label[1])

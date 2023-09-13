@@ -36,7 +36,7 @@ def add_todo(todo: str):
     TODO_list.append(todo)
     table = ""
     for item in TODO_list:
-        table += ("- " + todo + "\n")
+        table += ("- " + item + "\n")
     return table[:-1]
 
 def function_calling(messages: List[Dict]):
@@ -83,16 +83,16 @@ def function_calling(messages: List[Dict]):
     print(response_message)
 
     if "function_call" in response_message:
-        available_functions = {
-            "get_current_weather": get_current_weather,
-            "add_todo": add_todo
-        } 
+        available_function_infos = {
+            "get_current_weather": (get_current_weather, "location"),
+            "add_todo": (add_todo, "todo")
+        }
 
         function_name = response_message["function_call"]["name"]
-        function_to_call = available_functions[function_name]
-        function_arg = response_message["function_call"]["arguments"].values()[0]
+        function_info = available_function_infos[function_name]
+        function_arg = json.loads(response_message["function_call"]["arguments"])[function_info[1]]
 
-        return function_to_call(function_arg)
+        return function_info[0](function_arg)
 
     return None
         
