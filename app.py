@@ -9,6 +9,7 @@ from pdf import generate_summary, generate_question, generate_text
 from mnist import image_classification
 from stt import audio2text
 from tts import text2audio
+from function import function_calling
 import hashlib
 
 # Chatbot demo with multimodal input (text, markdown, LaTeX, code blocks, image, audio, & video). Plus shows support for streaming text.
@@ -38,6 +39,7 @@ def add_text(history, text):
     global history_dict
     global sound_pieces
     
+    print('add_text his:',history)
     if '/search' in text:
         results = search(text[8:])
         messages = messages + [{"role": "user", "content": f"Please answer {text[8:]} based on the search result: \n\n{results}"}]
@@ -69,11 +71,14 @@ def add_text(history, text):
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['audio', filename] 
 
+    elif '/function' in text:
+        messages = messages + [{"role": "user", "content": text[10:]}]
+        history = history + [(text, None)]
+        history_dict[getHashKey(text)] = ['function', None]
     else:
-        history_dict[getHashKey(text)] = ['chat',None]
         messages = messages + [{"role": "user", "content": text}]
         history = history + [(text, None)]
-        isTxt = False
+        history_dict[getHashKey(text)] = ['chat', None]
     
     return history, gr.update(value="", interactive=False)
 
@@ -149,11 +154,16 @@ def bot(history):
             yield history
             
         elif label[0] == 'image':
-            text=history[-1][0]
+            text = history[-1][0]
             results = image_generate(text[7:])   
             messages = messages + [{"role": "assistant", "content": results}]
             history[-1][1]=(results,)
             yield history
+
+        elif label[0] == 'function':
+            response = function_calling(messages)
+            history[-1][1] = response
+
         else:
     
             yield history
