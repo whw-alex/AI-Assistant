@@ -20,16 +20,16 @@ def lookup_location_id(location: str):
     return infos["location"][0]["id"]
 
 def get_current_weather(location: str):
-    url = 'https://api.qweather.com/v7/weather/24h?'
+    url = 'https://devapi.qweather.com/v7/weather/now?'
     params = {
         'location': lookup_location_id(location),
         'key': key,
     }
     infos = requests.get(url=url, params=params).json()
     print(infos)
-    temp = infos["feelsLike"]
-    text = infos["text"]
-    hmd = infos["humidity"]
+    temp = infos['now']["feelsLike"]
+    text = infos['now']["text"]
+    hmd = infos['now']["humidity"]
     return f"Temperature: {temp} Description: {text} Humidity: {hmd}"
 
 def add_todo(todo: str):
