@@ -20,7 +20,6 @@ def generate_text(prompt):
             content = chunk['choices'][0]['text']
             yield content
 
-
 def generate_question(current_file_text: str, content: str):
     return f"Please answer \"{content}\" based on the following content:\n{current_file_text}"
 
@@ -28,5 +27,10 @@ def generate_summary(current_file_text: str):
     return f"Please summerize the following content:\n{current_file_text}"
 
 if __name__ == "__main__":
+    prompt = generate_summary("Sun wukong is a lengendary charactor from Journey to the west")
+    for content in generate_text(prompt):
+        print(content)
+
     prompt = generate_question("Hello", "Who is Sun Wukong?")
-    generate_text(prompt)
+    for content in generate_text(prompt):
+        print(content)

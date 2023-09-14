@@ -86,7 +86,7 @@ def add_text(history, text):
 
 def add_file(history, file):
     global messages
-    global isTxt
+    global current_file_text
     print('add_file his:',history)
     if 'png' == file.name[-3:]:    # 图片分类
         messages = messages + [{"role": "user", "content": f"Please classify {file.name}"}]
@@ -95,7 +95,8 @@ def add_file(history, file):
         
 
     elif 'txt' == file.name[-3:]:
-        current_file_text = file.read().decode("utf-8")   # 读取文件内容
+        with open(file.name, "r", encoding='utf-8') as f:  #打开文本
+            current_file_text = f.read()   #读取文本
         prompt = generate_summary(current_file_text)
         messages = messages + [{"role": "user", "content": prompt}]
         history = history + [((file.name,), None)]
@@ -138,6 +139,8 @@ def bot(history):
                 history[-1][1] += response
                 time.sleep(0.05)
                 yield history
+            if history[-1][1] == '':
+                yield history
             messages += [{"role": "assistant", "content": collected_response}]
 
         elif label[0] == 'audio':
@@ -158,6 +161,7 @@ def bot(history):
 
         elif label[0] == 'function':
             response = function_calling(messages)
+            messages = messages + [{"role": "assistant", "content": response}]
             history[-1][1] = response
             yield history
             

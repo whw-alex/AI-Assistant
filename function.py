@@ -7,23 +7,23 @@ from typing import List, Dict
 openai.api_key = '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'
 openai.api_base = "http://166.111.80.169:8080/v1"
 
-api_key = "ff92e536a82e47839a9e1520d11acf74"
+key = "ff92e536a82e47839a9e1520d11acf74"
 TODO_list = []
 
 def lookup_location_id(location: str):
     url = 'https://geoapi.qweather.com/v2/city/lookup?'
     params = {
         'location': location,
-        'key': api_key,
+        'key': key,
     }
     infos = requests.get(url=url, params=params).json()
     return infos["location"][0]["id"]
 
 def get_current_weather(location: str):
-    url = 'https://api.qweather.com/v7/weather/now?'
+    url = 'https://api.qweather.com/v7/weather/24h?'
     params = {
         'location': lookup_location_id(location),
-        'key': api_key,
+        'key': key,
     }
     infos = requests.get(url=url, params=params).json()
     print(infos)
@@ -98,10 +98,11 @@ def function_calling(messages: List[Dict]):
         
 
 if __name__ == "__main__":
-    messages = [{"role": "user", "content": "Add a todo: walk"}]
-    response = function_calling(messages)
-    print(response)
+    # messages = [{"role": "user", "content": "Add a todo: walk"}]
+    # response = function_calling(messages)
+    # print(response)
     
-    messages = [{"role": "user", "content": "What's the weather like in Beijing?"}]
-    response = function_calling(messages)
-    print(response)
+    # messages = [{"role": "user", "content": "What's the weather like in Beijing?"}]
+    # response = function_calling(messages)
+    # print(response)
+    get_current_weather("Beijing")
