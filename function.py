@@ -20,13 +20,12 @@ def lookup_location_id(location: str):
     return infos["location"][0]["id"]
 
 def get_current_weather(location: str):
-    url = 'https://api.qweather.com/v7/weather/24h?'
+    url = 'https://devapi.qweather.com/v7/weather/now?'
     params = {
         'location': lookup_location_id(location),
         'key': key,
     }
-    infos = requests.get(url=url, params=params).json()
-    print(infos)
+    infos = requests.get(url=url, params=params).json()["now"]
     temp = infos["feelsLike"]
     text = infos["text"]
     hmd = infos["humidity"]
@@ -75,7 +74,7 @@ def function_calling(messages: List[Dict]):
     ]
 
     response = openai.ChatCompletion.create(
-        model = "openllama",
+        model = "ggml-openllama.bin",
         messages = messages,
         functions = functions
     )
@@ -98,11 +97,10 @@ def function_calling(messages: List[Dict]):
         
 
 if __name__ == "__main__":
-    # messages = [{"role": "user", "content": "Add a todo: walk"}]
-    # response = function_calling(messages)
-    # print(response)
+    messages = [{"role": "user", "content": "Add a todo: walk"}]
+    response = function_calling(messages)
+    print(response)
     
-    # messages = [{"role": "user", "content": "What's the weather like in Beijing?"}]
-    # response = function_calling(messages)
-    # print(response)
-    get_current_weather("Beijing")
+    messages = [{"role": "user", "content": "What's the weather like in Beijing?"}]
+    response = function_calling(messages)
+    print(response)
