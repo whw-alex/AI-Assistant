@@ -11,8 +11,11 @@ def audio2text(filename):
     """
     TODO
     """
+    print('loc 3')
     file=open(filename,'rb')
+    print('loc 4')
     result=openai.Audio.transcribe(model="whisper-1",file=file)
+    print('loc 5')
     text=''
     segments=result['segments']
     for seg in segments:
