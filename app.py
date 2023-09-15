@@ -166,7 +166,9 @@ def bot(history):
             yield history
             
         elif label[0] == 'wav':
+            print('loc 1')
             text= audio2text(label[1])
+            print('loc 2')
             messages = messages + [{"role": "assistant", "content": text}]
             history[-1][1]=text
             yield history
@@ -203,7 +205,7 @@ with gr.Blocks() as demo:
             container=False,
         )
         clear_btn = gr.Button('Clear')
-        btn = gr.UploadButton("📁", file_types=["image", "video", "audio"])
+        btn = gr.UploadButton("📁", file_types=["image", "video", "audio", "text"])
 
     txt_msg = txt.submit(add_text, [chatbot, txt], [chatbot, txt], queue=False).then(
         bot, chatbot, chatbot
