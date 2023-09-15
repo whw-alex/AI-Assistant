@@ -40,38 +40,38 @@ def add_text(history, text):
     global sound_pieces
     
     print('add_text his:',history)
-    if '/search' in text:
+    if '/search' == text[0:7]:
         results = search(text[8:])
         messages = messages + [{"role": "user", "content": f"Please answer {text[8:]} based on the search result: \n\n{results}"}]
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['search', None]
 
-    elif '/fetch' in text:
+    elif '/fetch' == text[0:6]:
         processed_results = fetch(text[7:])
         messages = messages + [{"role": "user", "content": f"Please summarize: \n\n{processed_results}"}]
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['fetch', None]
 
-    elif '/image' in text:      # 图片生成
+    elif '/image' == text[0:6]:      # 图片生成
         messages = messages + [{"role": "user", "content": text}]
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['image', None]
 
-    elif '/file' in text:
+    elif '/file' == text[0:5]:
         prompt = generate_question(current_file_text, text[6:])
         messages = messages + [{"role": "user", "content": prompt}]
         print('add_text:',text)
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['file', None]
 
-    elif '/audio' in text:
+    elif '/audio' == text[0:6]:
         sound_pieces+=1
         filename=str(sound_pieces)+'.wav'
         messages = messages + [{"role": "user", "content": text[7:]}]
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['audio', filename] 
 
-    elif '/function' in text:
+    elif '/function' == text[0:9]:
         messages = messages + [{"role": "user", "content": text[10:]}]
         history = history + [(text, None)]
         history_dict[getHashKey(text)] = ['function', None]
