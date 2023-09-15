@@ -5,12 +5,13 @@ import openai
 openai.api_key = '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'
 openai.api_base = "http://166.111.80.169:8080/v1"
 
+model='gpt-3.5-turbo'
 
 def chat(messages):
     print('start chatting...')
     print(f'messages: {messages}')
     response = openai.ChatCompletion.create(
-        model = 'gpt-3.5-turbo',
+        model = model,
         messages = messages,
         stream=True
     )
