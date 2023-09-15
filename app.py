@@ -106,6 +106,11 @@ def add_file(history, file):
         messages = messages + [{"role": "user", "content": f"Please transcribe {file.name}"}]
         history = history + [((file.name,), None)]
         history_dict[getHashKey((file.name,))] = ['wav',file.name]
+
+    else:
+        messages = messages + [{"role": "user", "content": file.name}]
+        history = history + [((file.name,), None)]
+        history_dict[getHashKey((file.name,))] = ['wrong', file.name]
         
     # TODO: 是否更新 messages？
     return history
@@ -126,7 +131,6 @@ def bot(history):
                 print(response)
                 collected_response += response
                 history[-1][1] += response
-                time.sleep(0.05)
                 yield history
             messages += [{"role": "assistant", "content": collected_response}]
         
@@ -137,7 +141,6 @@ def bot(history):
                 print(response)
                 collected_response += response
                 history[-1][1] += response
-                time.sleep(0.05)
                 yield history
             if history[-1][1] == '':
                 yield history
@@ -177,6 +180,11 @@ def bot(history):
             results=image_classification(label[1])
             messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
             history[-1][1]=f"Classification result:{results}"
+            yield history
+
+        elif label[0] == 'wrong':
+            messages = messages + [{"role": "assistant", "content": "The type of file you uploaded is incorrect"}]
+            history[-1][1]=f"The type of file you uploaded is incorrect"
             yield history
             
         else:
