@@ -126,7 +126,6 @@ def bot(history):
                 print(response)
                 collected_response += response
                 history[-1][1] += response
-                time.sleep(0.05)
                 yield history
             messages += [{"role": "assistant", "content": collected_response}]
         
@@ -137,7 +136,6 @@ def bot(history):
                 print(response)
                 collected_response += response
                 history[-1][1] += response
-                time.sleep(0.05)
                 yield history
             if history[-1][1] == '':
                 yield history
