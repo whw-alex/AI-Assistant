@@ -171,11 +171,17 @@ def bot(history):
         elif label[0] == 'wav':
             print('loc 1')
             text= audio2text(label[1])
-            print('loc 2')
-            messages = messages + [{"role": "assistant", "content": text}]
-            history[-1][1]=text
-            yield history
-            
+            messages = messages + [{"role": "user", "content": text}]
+            response_generator = chat(messages)
+            history[-1][1] = ''
+            for response in response_generator:
+                print(response)
+                collected_response += response
+                history[-1][1] += response
+                time.sleep(0.05)
+                yield history
+            messages += [{"role": "assistant", "content": collected_response}]
+     
         elif label[0] == 'png':
             results=image_classification(label[1])
             messages = messages + [{"role": "assistant", "content": f"Classification result:{results}"}]
@@ -213,7 +219,9 @@ with gr.Blocks() as demo:
             container=False,
         )
         clear_btn = gr.Button('Clear')
-        btn = gr.UploadButton("📁", file_types=["image", "video", "audio", "text"])
+
+        btn = gr.UploadButton("📁", file_types=["image", "video", "audio","text"])
+
 
     txt_msg = txt.submit(add_text, [chatbot, txt], [chatbot, txt], queue=False).then(
         bot, chatbot, chatbot
