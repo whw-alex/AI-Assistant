@@ -39,6 +39,8 @@ def add_text(history, text):
     global history_dict
     global sound_pieces
     
+    text = text.strip()
+
     print('add_text his:',history)
     if '/search' == text[0:7]:
         results = search(text[8:])
