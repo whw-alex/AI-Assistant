@@ -1,2 +1,2 @@
 # AI-Assistant
-后端大作业
+A backend project to provide AI service
